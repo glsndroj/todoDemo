@@ -8,16 +8,19 @@ import { useState } from "react";
 
 export default function Home() {
   const [todos, setTodos] = useState([]); // Hooson array(hamag ymaa end shidne)
-  const [input, setInput] = useState("");// hooson string inputes orj irj bga utgiig shidnee
-
-  const addElement = (element) => { // element n input deer bichigdej bgaa utga
-    const newElement = { id: uuid(), element: element };// todos ruu shine element oruulad setTodos array uusgej bga
-    if (element === "") { // herwee element n hooson string baiwal array n nemegdehgui heweeree bna 
-      setTodos(todos); 
-    } else {         // herwee hooson bish l bwal shine array uusgej bga
+  const [input, setInput] = useState(""); // hooson string inputes orj irj bga utgiig shidnee
+  const [filter, setFilter] = useState("all"); // all, active, completed towchnudin ungu uurchluh state
+  const addElement = (element) => {
+    // element n input deer bichigdej bgaa utga
+    const newElement = { id: uuid(), element: element }; // todos ruu shine element oruulad setTodos array uusgej bga
+    if (element === "") {
+      // herwee element n hooson string baiwal array n nemegdehgui heweeree bna
+      setTodos(todos);
+    } else {
+      // herwee hooson bish l bwal shine array uusgej bga
       setTodos([...todos, newElement]);
     }
-  }; // shine list nemdeg function, inputees awch bgaa utgiig door oruuldag, 
+  }; // shine list nemdeg function, inputees awch bgaa utgiig door oruuldag,
 
   const listDelete = (id) => {
     setTodos(
@@ -25,7 +28,9 @@ export default function Home() {
         return todo.id !== id;
       })
     );
-  };// 
+  }; //
+
+  
 
   return (
     <>
@@ -41,7 +46,7 @@ export default function Home() {
             ></Button>
           </div>
           <div>
-            <ListButton></ListButton>
+            <ListButton filter={filter} setFilter={setFilter}></ListButton>
           </div>
           {todos.map((todo, index) => {
             return (

@@ -11,7 +11,7 @@ export const List = (props) => {
         onClick={() => {
           listDelete(todo.id);
         }}
-        className="text-red-500 cursor-pointer"
+        className="text-red-500 active:text-red-300 cursor-pointer"
       >
         Delete
       </p>
