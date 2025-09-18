@@ -7,20 +7,17 @@ import { List } from "./_components/List";
 import { useState } from "react";
 
 export default function Home() {
-  const [todos, setTodos] = useState([]); // Hooson array(hamag ymaa end shidne)
-  const [input, setInput] = useState(""); // hooson string inputes orj irj bga utgiig shidnee
-  const [filter, setFilter] = useState("all"); // all, active, completed towchnudin ungu uurchluh state
+  const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState("");
+  const [filter, setFilter] = useState("all");
   const addElement = (element) => {
-    // element n input deer bichigdej bgaa utga
-    const newElement = { id: uuid(), element: element }; // todos ruu shine element oruulad setTodos array uusgej bga
+    const newElement = { id: uuid(), element: element, checked: false };
     if (element === "") {
-      // herwee element n hooson string baiwal array n nemegdehgui heweeree bna
       setTodos(todos);
     } else {
-      // herwee hooson bish l bwal shine array uusgej bga
       setTodos([...todos, newElement]);
     }
-  }; // shine list nemdeg function, inputees awch bgaa utgiig door oruuldag,
+  };
 
   const listDelete = (id) => {
     setTodos(
@@ -28,17 +25,41 @@ export default function Home() {
         return todo.id !== id;
       })
     );
-  }; //
+  };
+  const filterredTodos = todos.filter((el) => {
+    if (filter == "all") {
+      return true;
+    } else if (filter == "active") {
+      return !el.checked;
+    } else if (filter == "completed") {
+      return el.checked;
+    }
+  });
+  const completed = (id) => {
+    const newArray = todos.map((el) => {
+      if (el.id == id) el.checked = !el.checked;
+      return el;
+    });
+    setTodos(newArray);
+  };
 
-  
-
+  const deleteCompleted = () => {
+    const activeList = todos.filter((todo) => {
+      return !todo.checked;
+    });
+    setTodos(activeList);
+  };
   return (
     <>
       <div className="flex justify-center mt-50">
-        <div className=" p-10 flex flex-col gap-4 shadow-2xl rounded-[10px] w-fit">
+        <div className=" px-10 py-6 flex flex-col gap-4 shadow-2xl rounded-[10px] w-fit">
           <p className="flex justify-center text-2xl font-bold">To-Do list</p>
           <div className=" flex gap-4">
-            <Input input={input} setInput={setInput}></Input>
+            <Input
+              input={input}
+              setInput={setInput}
+              addElement={addElement}
+            ></Input>
             <Button
               input={input}
               addElement={addElement}
@@ -48,11 +69,36 @@ export default function Home() {
           <div>
             <ListButton filter={filter} setFilter={setFilter}></ListButton>
           </div>
-          {todos.map((todo, index) => {
-            return (
-              <List listDelete={listDelete} key={uuid()} todo={todo}></List>
-            );
-          })}
+          {todos.length == 0 ? (
+            <p className="text-[#6B7280]">No tasks yet. Add one above!</p>
+          ) : (
+            <>
+              {filterredTodos.map((todo, index) => {
+                return (
+                  <List
+                    listDelete={listDelete}
+                    key={uuid()}
+                    todo={todo}
+                    completed={completed}
+                  ></List>
+                );
+              })}
+              <div className="flex justify-between">
+                <p className="text-[#6B7280]">
+                  {todos.filter((todo) => todo.checked).length} of{" "}
+                  {todos.length} tasks completed
+                </p>
+                {filter === "completed" ? (
+                  <button
+                    className="text-gray-500 active:text-gray-400 w-fit cursor-pointer"
+                    onClick={deleteCompleted}
+                  >
+                    Delete All
+                  </button>
+                ) : null}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
